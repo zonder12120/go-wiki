@@ -446,3 +446,5 @@ type bmap struct {
 А вот для визуалов:
 
 ![](./map-khesh-tablicy-3.png)
+
+
