@@ -90,3 +90,5 @@ title: Память
 ![](./memory-2.png)
 
 
+
+![](./memory.png)
