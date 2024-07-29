@@ -83,7 +83,7 @@ title: Структуры
 
 **Структуры не являются ссылочным типом**, поэтому также как и массивы **передаются по значению**.
 
-Поэтому, при передаче
+Поэтому, при передаче экземпляра структуры в функцию, если нам нужно изменять оригинал экземпляра, нам нужно передавать его по указателю.
 
 :::
 
@@ -106,11 +106,11 @@ type Person struct {
 
 Смысл в том, что во время компиляции происходит внутренняя оптимизация структур.
 
-Напоминаю, что процессор может за такт обработать одно машинное слово, что в современных 64 битных процессорах - 8 байт. 
+Напоминаю, что процессор может за такт обработать одно машинное слово, что в современных 64 битных процессорах - 8 байт.
 
 Объявим структуру:
 
-```
+```Go
 type employee struct {
 		married bool
 		name    string
@@ -122,7 +122,7 @@ type employee struct {
 
 ![](./Structure-2.png)
 
-Но такое расположение в памяти не эффективно, так как процессор будет обрабатывать данные по слову, что заставит данные переменной `name` разделиться на 3 куска, которые надо будет как-то ещё и собирать, ещё и считает переменную name не за 2 такта, а за 3. Не дело. 
+Но такое расположение в памяти не эффективно, так как процессор будет обрабатывать данные по слову, что заставит данные переменной `name` разделиться на 3 куска разной длины, которые надо будет как-то ещё и собирать, а процессор ещё и считает переменную name не за 2 такта, а за 3. Не дело. 
 
 Поэтому Go делает struct padding (структурное выравнивание):
 
@@ -134,7 +134,7 @@ type employee struct {
 
 Поэтому перепишем структуру в порядке убывания полей:
 
-```
+```Go
 type employee struct {
 		name    string
 		age     uint8
@@ -152,4 +152,141 @@ type employee struct {
 
 ## Структурные теги (JSON, XML)
 
+Теги в структурах Go используются для того, чтобы дать дополнительные инструкции для сериализации и десериализации данных, таких как JSON, XML, Protobuf и других форматов.
+
+Применения:
+
+ 
+
+1. **Переименование полей**: Поля структуры могут иметь имена, отличные от тех, что используются в формате данных.
+
+2. **Пропуск полей**: Некоторые поля могут быть исключены из сериализации или десериализации.
+
+3. **Специальные инструкции по обработке полей**: Теги могут передавать специфичные команды для кодировщиков/декодировщиков.
+
 Структурные теги Go представляют собой аннотации, которые появляются в объявлении структуры Go после типа. Каждый тег состоит из коротких строк, связанных с некоторым соответствующим значением. То есть пары ключ-значение.
+
+Вот как выглядит код сериализации и десериализации для JSON:
+
+```Go
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+)
+
+type Person struct {
+	Name string `json:"full_name"` // Здесь мы задаём другое имя для JSON
+	Age  int    `json:"age"`	   // И здесь тоже, потому что регистр другой
+}
+
+func main() {
+	p := Person{Name: "Alice", Age: 30}
+
+	jsonData, err := json.Marshal(p)
+	if err != nil {
+		fmt.Printf("Error marshaling struct to JSON: %v\n", err)
+		return
+	}
+
+	fmt.Println(string(jsonData)) // {"full_name":"Alice","age":30}
+
+	err = json.Unmarshal(jsonData, &p) // Записываем в экземпляр структуры Person данные из JSON
+	if err != nil {
+		fmt.Printf("Error unmarshaling JSON to struct: %v\n", err)
+		return
+	}
+
+	fmt.Println(p) // {Alice 30}
+}
+```
+
+Мы подключили пакет **json** из каталога **encoding**, а затем использовали функции **Marshal()** и Unmarshal() для сериализации и десериализации соответственно.
+
+:::note 
+
+**При отсутсвии тегов названия полей в JSON соответствовали бы названию полей структуры.**
+
+То есть была бы JSON’ка вот такого вида: {“Name”:”Alice”, "Age":30}
+
+:::
+
+Ещё с помощью тегов можно задавать поведение полей при сериализации:
+
+```Go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+)
+
+type Person struct {
+    Name  string `json:"name"`
+    Age   int    `json:"age"`
+    Email string `json:"-"`     // Пропускаем поле Email
+}
+
+func main() {
+    p := Person{Name: "Alice", Age: 30, Email: "alice@example.com"}
+
+    jsonData, err := json.Marshal(p)
+	if err != nil {
+		fmt.Printf("Error marshaling struct to JSON: %v\n", err)
+		return
+	}
+
+    fmt.Println(string(jsonData))  // {"name":"Alice","age":30}
+}
+```
+
+А можно сделать поле опциональным, например:
+
+```Go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+)
+
+type Person struct {
+    Name  string `json:"name"`
+    Age   int    `json:"age,omitempty"`
+    Email string `json:"email,omitempty»` // Пропускаем поле, если нулевое значение 
+}
+
+func main() {
+    p := Person{Name: "Alice", Age: 0, Email: ""}
+
+    jsonData, err := json.Marshal(p)
+	if err != nil {
+		fmt.Printf("Error marshaling struct to JSON: %v\n", err)
+		return
+	}
+
+    fmt.Println(string(jsonData))  // {"name":"Alice"}
+}
+```
+
+Можно задать явно тип полю, например если поле является числом, обычно оно сериализуется как число, но нам надо как строку:
+
+```Go
+type Person struct {
+	Name string `json:"full_name"`
+	Age  int    `json:"age,string,omitempty,»` // Делаем строкой, пропускаем, если 0
+}
+
+func main() {
+	p := Person{Name: "Alice", Age: 30}
+
+	jsonData, err := json.Marshal(p)
+	if err != nil {
+		fmt.Printf("Error marshaling struct to JSON: %v\n", err)
+		return
+	}
+
+	fmt.Println(string(jsonData)) // {"full_name":"Alice","age":"30"} 
+}
+```
