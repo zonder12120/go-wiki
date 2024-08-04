@@ -1,6 +1,6 @@
 ---
 order: 4
-title: Операционные системы
+title: "Операционные системы\_(доделать)"
 ---
 
 <https://www.youtube.com/watch?v=k9wK2FThEsk> 17:33 защищённый режим
