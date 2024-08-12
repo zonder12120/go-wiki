@@ -11,7 +11,7 @@ title: Структуры
 
 1. Через доступ к самим полям
 
-   ```Go
+   ```go
    type Human struct {
    	name string
    	age uint8
@@ -35,7 +35,7 @@ title: Структуры
 
    1. В этом варианте важно сохранять порядок полей, как они объявлены в самой структуре, важно инициализировать все поля
 
-      ```Go
+      ```go
       type Person struct {
       	name string
       	age uint8
@@ -47,7 +47,7 @@ title: Структуры
 
    2. В этом варианте не важен порядок, не важно инициализировать поля, потому что в таком случае они изначально принимают нулевое значение типа, но важно в конце оставить висящую запятую
 
-      ```Go
+      ```go
       type Person struct {
       		name string
       		age uint8
@@ -63,7 +63,7 @@ title: Структуры
 
 3. Ну и через обычный литерал с явным объявлением
 
-   ```Go
+   ```go
    type Person struct {
    		name string
    		age uint8
@@ -89,7 +89,7 @@ title: Структуры
 
 В Go **нет ключевых слов для модификаторов доступа** для переменных, зато есть ЗАГЛАВНЫЕ БУКВЫ!!!11!! (не уверен, что мне это нравится, но да ладно)
 
-```Go
+```go
 type Person struct {
     Name string  // Публичное поле
     sex  int     // Приватное поле
@@ -110,7 +110,7 @@ type Person struct {
 
 Объявим структуру:
 
-```Go
+```go
 type employee struct {
 		married bool
 		name    string
@@ -134,7 +134,7 @@ type employee struct {
 
 **Поэтому перепишем структуру в порядке убывания полей:**
 
-```Go
+```go
 type employee struct {
 		name    string
 		age     uint8
@@ -166,7 +166,7 @@ type employee struct {
 
 Вот как выглядит код сериализации и десериализации для JSON:
 
-```Go
+```go
 package main
 
 import (
@@ -212,7 +212,7 @@ func main() {
 
 Ещё с помощью тегов можно задавать поведение полей при сериализации:
 
-```Go
+```go
 package main
 
 import (
@@ -241,7 +241,7 @@ func main() {
 
 А можно сделать поле опциональным, например:
 
-```Go
+```go
 package main
 
 import (
@@ -270,7 +270,7 @@ func main() {
 
 Можно задать явно тип полю, например если поле является числом, обычно оно сериализуется как число, но нам надо как строку:
 
-```Go
+```go
 type Person struct {
 	Name string `json:"full_name"`
 	Age  int    `json:"age,string,omitempty,»` // Делаем строкой, пропускаем, если 0

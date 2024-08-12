@@ -25,7 +25,7 @@ title: ООП в Go
 
 Есть ещё **оператор распаковки**, он пишется после имени переменной, например, когда мы хотим добавить в слайс элементы другого слайса. Мы не можем просто прибавить слайс через функцию **append()**, мы сначала его должны распаковать:
 
-```
+```go
 slc1 := []int{0, 1, 2, 3}
 
 slc2 := []int{4, 5, 6, 7}
@@ -39,7 +39,7 @@ fmt.Println(slc1) // [0 1 2 3 4 5 6 7]
 
 #### Пользовательский тип на основе встроенного типа int:
 
-```
+```go
 // Объявление типа
 type MyInt int
 
@@ -57,7 +57,7 @@ func main() {
 
 #### Структура:
 
-```
+```go
 // Структура
 type Person struct {
 	Name  string
@@ -85,7 +85,7 @@ func main() {
 
 Проверим это:
 
-```Go
+```go
 type Person struct {
 	Name  string
 	Age uint8
@@ -125,7 +125,7 @@ func main() {
 
 Пример:
 
-```Go
+```go
 type Person struct {
 	Name    string
 	Age     uint8
@@ -160,7 +160,7 @@ func main() {
 
 Рекомендую копировать примеры в IDE и пощупать, как это всё работает.
 
-```
+```go
 package main
 
 import (
@@ -254,7 +254,7 @@ func main() {
 
 Пример:
 
-```Go
+```go
 package main
 
 import (
@@ -424,7 +424,7 @@ func main() {
 
 Ещё у нас есть структура `human`, которая реализует метод `say()`, а ещё структура `parrot`, которая тоже реализует метод `say()`, а заодно функция `showSpeech()`, которая принимает в себя переменную типа `talker`, и выводит “речь” на экран.
 
-```Go
+```go
 package main
 
 import (
@@ -472,7 +472,7 @@ func main() {
 
 Но если бы мы передавали в функцию `showSpeech()` тип, который не реализует метод `say()`, то мы бы получили ошибку, например:
 
-```Go
+```go
 //…остальной код
 
 type rat struct{}
@@ -485,7 +485,7 @@ func main() {
 
 Подсветится в IDE:
 
-```
+```plaintext
 cannot use remy (variable of type *rat) as talker value in argument to showSpeech: 
 *rat does not implement talker (missing method say)
 ```
@@ -538,7 +538,7 @@ cannot use remy (variable of type *rat) as talker value in argument to showSpeec
 
 Например:
 
-```Go
+```go
 package main
 
 import "fmt"
@@ -564,13 +564,13 @@ func main() {
 
 Например, если мы захотим прибавить к `person.age` единичку, то получим ошибку
 
-```
+```plaintext
 invalid operation: person["age"] + 1 (mismatched types interface {} and int)
 ```
 
 Поэтому при таком подходе надо сначала приводить значение из интерфейсного типа обратно к своему базовому типу, а затем над ним производить операции:
 
-```Go
+```go
 package main
 
 import "log"
