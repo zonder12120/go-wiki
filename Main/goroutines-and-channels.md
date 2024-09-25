@@ -266,5 +266,3 @@ func main() {
 -  На macOS и BSD-системах -- **kqueue**.
 
 -  На Windows -- это **IOCP** (I/O Completion Port)
-
-
