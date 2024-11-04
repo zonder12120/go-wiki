@@ -1,6 +1,6 @@
 ---
 order: 12
-title: Docker и Make (дописать)
+title: Docker и Make (доделать)
 ---
 
 
