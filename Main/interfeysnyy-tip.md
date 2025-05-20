@@ -20,7 +20,7 @@ type iface struct {
 }
 ```
 
-**Пустой интерфейс (**interface\{}**)**
+**Пустой интерфейс (interface\{}**)
 
 ```go
 type eface struct {
